@@ -45,11 +45,11 @@ int main(void) {
 			++cnt;
 		}
 		if (cnt < bq.size() / 2 + 1) {
-			left_rotate(x);
 			res += cnt;
+			left_rotate(x);
 		} else {
+			res += dq.size() - cnt;
 			right_rotate(x);
-			res += (dq.size() - cnt + 1);
 		}
 	}
 
