@@ -1,17 +1,15 @@
 #include <iostream>
 #include <queue>
+#include <tuple>
 
 using namespace std;
-
-#define X first
-#define Y second
 
 int board[100][100][100];
 int vis[100][100][100];
 
-int dx[4] = {0, 1, 0, -1};
-int dy[4] = {1, 0, -1, 0};
-int dh[2] = {1, -1};
+int dx[6] = {0, 1, 0, -1, 0, 0};
+int dy[6] = {1, 0, -1, 0, 0, 0};
+int dz[6] = {0, 0, 0, 0, 1, -1};
 
 int main(void) {
 	ios::sync_with_stdio(0);
@@ -20,41 +18,34 @@ int main(void) {
 	int M, N, H;
 
 	cin >> M >> N >> H;
-	queue<pair<int, pair<int, int> > > q;
+	queue<tuple<int, int, int> > q;
 
 	for (int i = 0; i < H; ++i) {
 		for (int j = 0; j < N; ++j) {
 			for (int k = 0; k < M; ++k) {
 				cin >> board[i][j][k];
-				if (board[i][j][k] == 1) q.push({i, {j, k}});
+				if (board[i][j][k] == 1) q.push({i, j, k});
 			}
 		}
 	}
 
 	while (!q.empty()) {
-		pair<int, pair<int, int> > cur = q.front(); q.pop();
+		auto cur = q.front(); q.pop();
 
-		// 상하좌우
-		for (int dir = 0; dir < 4; ++dir) {
-			int nx = cur.Y.X + dx[dir];
-			int ny = cur.Y.Y + dy[dir];
+		int curZ, curX, curY;
+		tie(curZ, curX, curY) = cur;
 
-			if (nx < 0 || nx >= N || ny < 0 || ny >= M) continue;
-			if (vis[cur.X][nx][ny] || board[cur.X][nx][ny]) continue;
+		for (int dir = 0; dir < 6; ++dir) {
+			int nz = curZ + dz[dir];
+			int nx = curX + dx[dir];
+			int ny = curY + dy[dir];
 
-			vis[cur.X][nx][ny] = 1;
-			board[cur.X][nx][ny] = board[cur.X][cur.Y.X][cur.Y.Y] + 1;
-			q.push({cur.X, {nx, ny}});
-		}
-		// 윗칸아래칸
-		for (int dir = 0; dir < 2; ++dir) {
-			int nh = cur.X + dh[dir];
-			if (nh < 0 || nh >= H) continue;
-			if (vis[nh][cur.Y.X][cur.Y.Y] || board[nh][cur.Y.X][cur.Y.Y]) continue;
+			if (nx < 0 || nx >= N || ny < 0 || ny >= M || nz < 0 || nz >= H) continue;
+			if (vis[nz][nx][ny] || board[nz][nx][ny]) continue;
 
-			vis[nh][cur.Y.X][cur.Y.Y] = 1;
-			board[nh][cur.Y.X][cur.Y.Y] = board[cur.X][cur.Y.X][cur.Y.Y] + 1;
-			q.push({nh, {cur.Y.X, cur.Y.Y}});
+			vis[nz][nx][ny] = 1;
+			board[nz][nx][ny] = board[curZ][curX][curY] + 1;
+			q.push({nz, nx, ny});
 		}
 	}
 
