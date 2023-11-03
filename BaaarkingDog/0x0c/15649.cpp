@@ -2,10 +2,9 @@
 
 using namespace std;
 
-#define MAX 9
 int n, m;
-int arr[MAX];
-bool visited[MAX];
+int arr[10];
+bool visited[10];
 
 void f(int k) {
 	if (k == m) {
