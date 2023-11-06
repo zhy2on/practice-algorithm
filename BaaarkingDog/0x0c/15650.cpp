@@ -27,3 +27,18 @@ int main(void) {
 
 	p(0, 0);
 }
+
+/* next_permutation ver.
+int main(void) {
+	cin >> N >> M;
+
+	for (int i = M; i < N; ++i) arr[i] = 1;
+
+	do {
+		for (int i = 0; i < N; ++i) {
+			if (!arr[i]) cout << i + 1 << ' ';
+		}
+		cout << '\n';
+	} while(next_permutation(arr, arr + N));
+}
+*/
