@@ -1,105 +1,57 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
 #define X first
 #define Y second
 
+int N, M, board1[10][10], board2[10][10];
 int dx[4] = {1, 0, -1, 0};
 int dy[4] = {0, -1, 0, 1};
-int board[8][8], ans;
+vector<pair<int, int> > cctv;
 
-int N, M;
-
-int filled_area(int x, int y, int dir) {
+int fill_area(int x, int y, int dir) {
+	dir %= 4;
 	int cnt = 0;
 	while (1) {
-		x += dx[dir];
-		y += dy[dir];
-		if (x < 0 || x >= N || y < 0 || y >= M) break;
-		if (board[x][y] == 6) break;
+		x = x + dx[dir];
+		y = y + dy[dir];
 
-		if (board[x][y] == 0) ++cnt;
+		if (x < 0 || x >= N || y < 0 || y >= M) break;
+		if (board2[x][y] == 6) break;
+		if (board2[x][y] == 0 && ++cnt) board2[x][y] = -1;
 	}
 	return cnt;
 }
 
-void fill_board(int x, int y, int dir) {
-	while (1) {
-		x += dx[dir];
-		y += dy[dir];
-		if (x < 0 || x >= N || y < 0 || y >= M) break;
-		if (board[x][y] == 6) break;
-
-		if (board[x][y] == 0) board[x][y] = -1;
-	}
-}
-
-vector<pair<int, int> > area_array(int x, int y) {
-	vector<pair<int, int> > area;
-	for (int i = 0; i < 4; ++i) area.push_back({filled_area(x, y, i), i});
-	return area;
-}
-
-void cam5(int x, int y) {
-	for (int i = 0; i < 4; ++i) fill_board(x, y, i);
-}
-
-void cam4(int x, int y) {
-	vector<pair<int, int> > area = area_array(x, y);
-	sort(area.begin(), area.end());
-	for (int i = 1; i < 4; ++i) fill_board(x, y, area[i].Y);
-}
-
-void cam3(int x, int y) {
-	vector<pair<int, int> > area = area_array(x, y);
-	sort(area.begin(), area.end());
-	if ((area[2].X + area[3].X) % 2) {
-		fill_board(x, y, area[3].Y);
-		fill_board(x, y, area[2].Y);
-	} else {
-		fill_board(x, y, area[3].Y);
-		fill_board(x, y, area[1].Y);
-	}
-}
-
-void cam2(int x, int y) {
-	vector<pair<int, int> > area = area_array(x, y);
-	if (area[0].X + area[2].X > area[1].X + area[3].X) {
-		fill_board(x, y, area[0].Y);
-		fill_board(x, y, area[2].Y);
-	} else {
-		fill_board(x, y, area[1].Y);
-		fill_board(x, y, area[3].Y);
-	}
-}
-
-void cam1(int x, int y) {
-	vector<pair<int, int> > area = area_array(x, y);
-	sort(area.begin(), area.end());
-	fill_board(x, y, area[3].Y);
-}
-
-void switch_cam_case(int x, int y, int cam) {
-	switch (cam) {
+int cctv_area(int x, int y, int dir) {
+	int area = 0;
+	switch (board1[x][y]) {
 		case 1:
-			cam1(x, y);
+			area += fill_area(x, y, dir);
 			break;
 		case 2:
-			cam2(x, y);
+			area += fill_area(x, y, dir);
+			area += fill_area(x, y, dir + 2);
 			break;
 		case 3:
-			cam3(x, y);
+			area += fill_area(x, y, dir);
+			area += fill_area(x, y, dir + 1);
 			break;
 		case 4:
-			cam4(x, y);
+			area += fill_area(x, y, dir);
+			area += fill_area(x, y, dir + 2);
+			area += fill_area(x, y, dir + 3);
 			break;
 		case 5:
-			cam5(x, y);
+			area += fill_area(x, y, dir);
+			area += fill_area(x, y, dir + 1);
+			area += fill_area(x, y, dir + 2);
+			area += fill_area(x, y, dir + 3);
 			break;
 	}
+	return area;
 }
 
 int main(void) {
@@ -107,43 +59,30 @@ int main(void) {
 	cin.tie(0);
 
 	cin >> N >> M;
-
+	int wall = 0;
 	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < M; ++j)
-			cin >> board[i][j];
-	}
-
-	for (int k = 5; k >= 1; --k) {
-		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < M; ++j) {
-				if (board[i][j] == k) switch_cam_case(i, j, k);
-			}
+		for (int j = 0; j < M; ++j) {
+			cin >> board1[i][j];
+			if (board1[i][j] >= 1 && board1[i][j] <= 5) cctv.push_back({i, j});
+			if (board1[i][j] == 6) ++wall;
 		}
 	}
 
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < M; ++j)
-			if (board[i][j] == 0) ++ans;
+	int area = 0;
+	for (int t = 0; t < (1 << (2 * cctv.size())); ++t) {
+		for (int i = 0; i < N; ++i)
+			for (int j = 0; j < M; ++j)
+				board2[i][j] = board1[i][j];
+
+		int tmp = t;
+		int cnt = 0;
+		for (int i = 0; i < cctv.size(); ++i) {
+			int dir = tmp % 4;
+			tmp /= 4;
+			cnt += cctv_area(cctv[i].X, cctv[i].Y, dir);
+		}
+		area = max(cnt, area);
 	}
 
-	if (ans == N * M) ans = 0;
-	cout << ans;
+	cout << N * M - cctv.size() - wall - area;
 }
-
-/*
-6 6
-0 0 0 0 0 0
-0 2 0 0 0 0
-0 0 0 0 6 0
-0 6 0 0 2 5
-0 0 0 0 0 0
-0 0 0 0 0 5
-
-6 6
-0 0 0 0 0 0
-0 0 0 0 0 0
-0 0 0 0 6 0
-0 1 0 0 2 0
-0 0 0 0 0 0
-0 0 0 0 0 5
-*/
