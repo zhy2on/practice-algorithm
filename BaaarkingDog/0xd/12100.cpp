@@ -22,6 +22,7 @@ void rotate() {
 }
 
 bool move(int i, int j, int cur) {
+	if (!board2[i][j].X) return true;
 	if ((board2[i][cur].X == board2[i][j].X) && !board2[i][j].Y) {
 		board2[i][cur] = {board2[i][cur].X * 2, 1};
 		board2[i][j] = {0, 0};
@@ -48,7 +49,6 @@ void swipe() {
 
 	for (int i = 0; i < N; ++i) {
 		for (int j = 0; j < N; ++j) {
-			if (!board2[i][j].X) continue;
 			int cur = j;
 			while (cur--) {
 				if (move(i, j, cur)) break;
@@ -67,12 +67,12 @@ int main(void) {
 		for (int j = 0; j < N; ++j) cin >> board1[i][j].X;
 	}
 
-	int from_dir = 0, maxx = 0;
+	int maxx = 0;
 	for (int t = 0; t < (1 << 10); ++t) {
 		for (int i = 0; i < N; ++i) {
 			for (int j = 0; j < N; ++j) board2[i][j] = board1[i][j];
 		}
-		int tmp = t;
+		int from_dir = 0, tmp = t;
 		for (int i = 0; i < 5; ++i) {
 			int to_dir = tmp % 4;
 			tmp /= 4;
@@ -85,9 +85,7 @@ int main(void) {
 			swipe();
 		}
 		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) {
-				maxx = max(maxx, board2[i][j].X);
-			}
+			for (int j = 0; j < N; ++j) maxx = max(maxx, board2[i][j].X);
 		}
 	}
 
