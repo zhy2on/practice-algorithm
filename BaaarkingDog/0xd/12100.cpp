@@ -3,14 +3,11 @@
 
 using namespace std;
 
-#define X first
-#define Y second
-
 int N;
-pair<int, bool> board1[22][22], board2[22][22];
+int board1[22][22], board2[22][22];
 
 void rotate() {
-	pair<int, bool> tmp[22][22];
+	int tmp[22][22];
 	for (int i = 0; i < N; ++i) {
 		for (int j = 0; j < N; ++j)
 			tmp[i][j] = board2[i][j];
@@ -21,39 +18,17 @@ void rotate() {
 	}
 }
 
-bool move(int i, int j, int cur) {
-	if (!board2[i][j].X) return true;
-	if ((board2[i][cur].X == board2[i][j].X) && !board2[i][j].Y) {
-		board2[i][cur] = {board2[i][cur].X * 2, 1};
-		board2[i][j] = {0, 0};
-		return true;
-	}
-	if (board2[i][cur].X) {
-		if (cur + 1 == j) return true;
-		board2[i][cur + 1] = board2[i][j];
-		board2[i][j] = {0, 0};
-		return true;
-	}
-	if (cur == 0) {
-		board2[i][cur] = board2[i][j];
-		board2[i][j] = {0, 0};
-		return true;
-	}
-	return false;
-}
-
 void swipe() {
 	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) board2[i][j].Y = 0;
-	}
-
-	for (int i = 0; i < N; ++i) {
+		int idx = 0;
+		int tmp[22] = {};
 		for (int j = 0; j < N; ++j) {
-			int cur = j;
-			while (cur--) {
-				if (move(i, j, cur)) break;
-			}
+			if (!board2[i][j]) continue;
+			if (!tmp[idx]) tmp[idx] = board2[i][j];
+			else if (tmp[idx] == board2[i][j]) tmp[idx++] *= 2;
+			else tmp[++idx] = board2[i][j];
 		}
+		for (int j = 0; j < N; ++j) board2[i][j] = tmp[j];
 	}
 }
 
@@ -64,7 +39,7 @@ int main(void) {
 	cin >> N;
 
 	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) cin >> board1[i][j].X;
+		for (int j = 0; j < N; ++j) cin >> board1[i][j];
 	}
 
 	int maxx = 0;
@@ -72,30 +47,18 @@ int main(void) {
 		for (int i = 0; i < N; ++i) {
 			for (int j = 0; j < N; ++j) board2[i][j] = board1[i][j];
 		}
-		int from_dir = 0, tmp = t;
+		int tmp = t;
 		for (int i = 0; i < 5; ++i) {
-			int to_dir = tmp % 4;
+			int dir = tmp % 4;
 			tmp /= 4;
 
-			while (from_dir != to_dir) {
-				++from_dir;
-				from_dir %= 4;
-				rotate();
-			}
+			while (dir--) rotate();
 			swipe();
 		}
 		for (int i = 0; i < N; ++i) {
-			for (int j = 0; j < N; ++j) maxx = max(maxx, board2[i][j].X);
+			for (int j = 0; j < N; ++j) maxx = max(maxx, board2[i][j]);
 		}
 	}
 
 	cout << maxx;
 }
-
-/*
-4
-2 0 0 0
-2 2 0 0
-2 0 0 0
-0 0 0 0
-*/
