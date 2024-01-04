@@ -12,7 +12,7 @@ int main(void) {
 		cin >> num;
 		++arr[num];
 	}
-	for (int i = 0; i < N; ++i) {
+	for (int i = 1; i <= 10000; ++i) {
 		while (arr[i]--) {
 			cout << i << '\n';
 		}
