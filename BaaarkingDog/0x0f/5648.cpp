@@ -12,11 +12,8 @@ int main(void) {
 	for (int i = 0; i < N; ++i) {
 		string str;
 		cin >> str;
-		int len = str.size();
-		for (int j = 0; j < len / 2; ++j) {
-			swap(str[j], str[len - 1 - j]);
-		}
-		arr[i] = stol(str);
+		reverse(str.begin(), str.end());
+		arr[i] = stoll(str);
 	}
 	sort(arr, arr + N);
 	for (int i = 0; i < N; ++i) cout << arr[i] << '\n';
