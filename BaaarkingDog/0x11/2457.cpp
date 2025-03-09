@@ -28,16 +28,16 @@ int main(void) {
 	sort(date, date + n);
 
 	int ans = 0, i = 0, next_i;
-	while (i < n) {
-		if (date[i].first > 11030) break;
+	while (date[i].first <= 11030) {
 		next_i = find_next_index(i);
-		if (next_i == i) break;
+		if (next_i == i) {
+			cout << 0;
+			return 0;
+		}
 		t = date[next_i].first;
 		i = next_i;
 		ans += 1;
 	}
-
-	if (date[i].first < 11030) ans = 0;
 
 	cout << ans;
 }
