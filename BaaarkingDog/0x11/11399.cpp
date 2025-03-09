@@ -15,10 +15,9 @@ int main(void) {
 	}
 	sort(person, person + n);
 
-	int ans = person[0];
-	for (int i = 1; i < n; ++i) {
-		person[i] += person[i - 1];
-		ans += person[i];
+	int ans = 0;
+	for (int i = 0; i < n; ++i) {
+		ans += person[i] * (n - i);
 	}
 	cout << ans;
 }
