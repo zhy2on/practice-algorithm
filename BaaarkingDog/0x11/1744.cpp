@@ -1,7 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int num[51];
+long long ans;
+
+void get_sum(vector<int> v) {
+	while (v.size() > 1) {
+		ans += v[v.size() - 1] * v[v.size() - 2];
+		v.pop_back();
+		v.pop_back();
+	}
+	if (v.size()) ans += v[0];
+}
 
 int main(void) {
 	ios::sync_with_stdio(0);
@@ -9,36 +18,20 @@ int main(void) {
 	int n;
 
 	cin >> n;
-
-	int zero = 0, one = 0, ans = 0;
+	vector<int> vP, vN;
 	for (int i = 0; i < n; ++i) {
-		cin >> num[i];
-		if (num[i] == 0) {
-			zero = 1;
-			i -= 1;
-			n -= 1;
-		} else if (num[i] == 1) {
-			ans += 1;
-			i -= 1;
-			n -= 1;
-		}
+		int k;
+		cin >> k;
+		if (k == 1)
+			++ans;
+		else if (k > 0)
+			vP.push_back(k);
+		else
+			vN.push_back(k);
 	}
-	sort(num, num + n);
-
-	int i = n - 1;
-	while (num[i] >= 0 && num[i - 1] >= 0 && i >= 1) {
-		ans += num[i] * num[i - 1];
-		i -= 2;
-	}
-	if (num[i] >= 0) ans += num[i--];
-	// 음수가 홀수 개면
-	if (i % 2 == 0) {
-		if (!zero) ans += num[i];
-		i -= 1;
-	}
-	while (i >= 0) {
-		ans += num[i] * num[i - 1];
-		i -= 2;
-	}
+	sort(vP.begin(), vP.end());
+	sort(vN.begin(), vN.end(), greater<int>());
+	get_sum(vP);
+	get_sum(vN);
 	cout << ans;
 }
