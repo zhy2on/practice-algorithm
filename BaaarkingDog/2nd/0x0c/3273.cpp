@@ -16,9 +16,8 @@ int main(void) {
 	cin >> x;
 
 	int ans = 0;
-	for (int i = 1; i < x / 2; ++i) {
+	for (int i = 1; i < (x + 1) / 2; ++i) {
 		if (cnt[i] && cnt[x - i]) ans++;
 	}
-	if (x % 2 != 0 && cnt[x / 2]) ans++;
 	cout << ans;
 }
