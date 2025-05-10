@@ -5,20 +5,20 @@ int T = 100;
 
 bool check_palindrome_vertical(int start, int end, string board[200], int j) {
 	while (start < end) {
-		if (board[start][j] != board[end][j]) break;
+		if (board[start][j] != board[end][j]) return false;
 		++start;
 		--end;
 	}
-	return start >= end;
+	return true;
 }
 
 bool check_palindrome_horizon(int start, int end, string board[200], int i) {
 	while (start < end) {
-		if (board[i][start] != board[i][end]) break;
+		if (board[i][start] != board[i][end]) return false;
 		++start;
 		--end;
 	}
-	return start >= end;
+	return true;
 }
 
 int longest_palindrome(string board[200]) {
