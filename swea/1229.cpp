@@ -1,29 +1,36 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-void delete_nums(vector<int> &original_v) {
+void delete_nums(vector<int> &v) {
 	int index, count;
 	cin >> index >> count;
-	original_v.erase(original_v.begin() + index,
-					 original_v.begin() + index + count);
+	v.erase(v.begin() + index, v.begin() + index + count);
 }
 
-void insert_nums(vector<int> &original_v) {
+void insert_nums(vector<int> &v) {
 	int index, count;
 	cin >> index >> count;
 
-	vector<int> v;
-	for (int i = 0; i < count; ++i) {
-		int tmp;
-		cin >> tmp;
-		v.push_back(tmp);
+	int arr[21];
+	for (int i = 0; i < count; ++i) cin >> arr[i];
+	v.insert(v.begin() + index, arr, arr + count);
+}
+
+void edit_password(vector<int> &v) {
+	int n;
+	cin >> n;
+	for (int i = 0; i < n; ++i) {
+		char cmd;
+		cin >> cmd;
+		if (cmd == 'I') {
+			insert_nums(v);
+		} else {
+			delete_nums(v);
+		}
 	}
-
-	original_v.insert(original_v.begin() + index, v.begin(), v.end());
 }
 
-void solve_case(vector<int> &v) {
+void get_password(vector<int> &v) {
 	int n;
 	cin >> n;
 	for (int i = 0; i < n; ++i) {
@@ -31,26 +38,15 @@ void solve_case(vector<int> &v) {
 		cin >> tmp;
 		v.push_back(tmp);
 	}
-
-	int cmd_n;
-	cin >> cmd_n;
-	for (int i = 0; i < cmd_n; ++i) {
-		char cmd;
-		cin >> cmd;
-		if (cmd == 'I')
-			insert_nums(v);
-		else
-			delete_nums(v);
-	}
 }
 
 int main(void) {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-
 	for (int t = 0; t < 10; ++t) {
 		vector<int> v;
-		solve_case(v);
+		get_password(v);
+		edit_password(v);
+
+		// 출력
 		cout << '#' << t + 1 << ' ';
 		for (int i = 0; i < 10; ++i) cout << v[i] << ' ';
 		cout << '\n';
