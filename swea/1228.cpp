@@ -1,48 +1,42 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void solve(list<int> &l) {
-	char c;
-	int index;
-	int count;
-
-	cin >> c >> index >> count;
-	stack<int> s;
-	for (int i = 0; i < count; ++i) {
-		int n;
-		cin >> n;
-		s.push(n);
+void solve_case(int t) {
+	int n;
+	vector<int> v;
+	cin >> n;
+	for (int i = 0; i < n; ++i) {
+		int tmp;
+		cin >> tmp;
+		v.push_back(tmp);
 	}
 
-	for (int i = 0; i < count; ++i) {
-		int n = s.top();
-		s.pop();
-		auto it = l.begin();
-		for (int j = 0; j < index; ++j) it++;
-		l.insert(it, n);
+	int c;
+	cin >> c;
+	for (int i = 0; i < c; ++i) {
+		char cmd;
+		int index, count;
+		cin >> cmd >> index >> count;
+		vector<int> insert_v;
+		for (int j = 0; j < count; ++j) {
+			int tmp;
+			cin >> tmp;
+			insert_v.push_back(tmp);
+		}
+		v.insert(v.begin() + index, insert_v.begin(), insert_v.end());
 	}
+
+	cout << '#' << t << ' ';
+	for (int i = 0; i < 10; ++i) cout << v[i] << ' ';
+	cout << '\n';
 }
 
 int main(void) {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-	for (int i = 0; i < 10; ++i) {
-		int n;
-		cin >> n;
-		list<int> l;
-		for (int j = 0; j < n; ++j) {
-			int k;
-			cin >> k;
-			if (i < 10) l.push_back(k);
-		}
-		int tt;
-		cin >> tt;
-		for (int j = 0; j < tt; ++j) solve(l);
-		cout << '#' << i + 1 << ' ';
-		auto it = l.begin();
-		for (int j = 0; j < 10; ++j) cout << *it++ << ' ';
-		cout << '\n';
+	for (int t = 0; t < 10; ++t) {
+		solve_case(t + 1);
 	}
 }
 
