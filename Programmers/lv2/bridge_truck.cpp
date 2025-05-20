@@ -2,26 +2,21 @@
 using namespace std;
 
 int solution(int bridge_length, int weight, vector<int> truck_weights) {
-	int time = 0, cur_weight = 0, idx = 0;
+	int time = bridge_length, cur_weight = 0, idx = 0;
 	queue<int> bridge;
 
-	for (int i = 0; i < bridge_length; ++i) bridge.push(0);
-
-	while (!bridge.empty()) {
+	while (idx < truck_weights.size()) {
 		++time;
 
-		// 트럭이 이동. 맨 앞에 있는 트럭이 다리를 지나감
-		cur_weight -= bridge.front();
-		bridge.pop();
-
-		// 들어올 트럭이 있다면
-		if (idx < truck_weights.size()) {
-			// 트럭이 들어올 수 있으면 들여보내기
-			if (cur_weight + truck_weights[idx] <= weight) {
-				cur_weight += truck_weights[idx];
-				bridge.push(truck_weights[idx++]);
-			} else	// 들어올 수 없으면 빈 공간 추가
-				bridge.push(0);
+		if (bridge.size() == bridge_length) {
+			cur_weight -= bridge.front();
+			bridge.pop();
+		}
+		if (cur_weight + truck_weights[idx] <= weight) {
+			cur_weight += truck_weights[idx];
+			bridge.push(truck_weights[idx++]);
+		} else {
+			bridge.push(0);
 		}
 	}
 	return time;
