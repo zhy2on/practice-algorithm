@@ -2,7 +2,6 @@
 using namespace std;
 
 deque<int> dq;
-int target[51];
 
 int main(void) {
 	ios::sync_with_stdio(0);
@@ -12,27 +11,22 @@ int main(void) {
 
 	cin >> n >> m;
 	for (int i = 1; i <= n; ++i) dq.push_back(i);
-	for (int i = 0; i < m; ++i) cin >> target[i];
 
 	int ans = 0;
-	for (int i = 0; i < m; ++i) {
-		int where;
-		for (where = 0; where < dq.size(); ++where) {
-			if (dq[where] == target[i]) break;
-		}
+	while (m--) {
+		int t;
+		cin >> t;
+		int idx = find(dq.begin(), dq.end(), t) - dq.begin();
 
-		if (where <= dq.size() / 2) {
-			while (dq.front() != target[i]) {
+		while (dq.front() != t) {
+			if (idx <= dq.size() / 2) {
 				dq.push_back(dq.front());
 				dq.pop_front();
-				++ans;
-			}
-		} else {
-			while (dq.front() != target[i]) {
+			} else {
 				dq.push_front(dq.back());
 				dq.pop_back();
-				++ans;
 			}
+			++ans;
 		}
 		dq.pop_front();
 	}
