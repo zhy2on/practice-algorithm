@@ -8,7 +8,7 @@ int dx[4] = {1, 0, -1, 0};
 int dy[4] = {0, -1, 0, 1};
 
 bool vis[100][100];
-string board[100];
+char board[100][100];
 
 int N, ans1, ans2;
 
@@ -44,7 +44,9 @@ int main(void) {
 
 	cin >> N;
 
-	for (int i = 0; i < N; ++i) cin >> board[i];
+	for (int i = 0; i < N; ++i) {
+		for (int j = 0; j < N; ++j) cin >> board[i][j];
+	}
 
 	for (int i = 0; i < N; ++i) {
 		for (int j = 0; j < N; ++j) ans1 += bfs(i, j);
