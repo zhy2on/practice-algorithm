@@ -1,91 +1,76 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int T, W, H;
+int t, w, h;
 char board[1000][1000];
-int dist1[1000][1000];
-int dist2[1000][1000];
-int ans = INT_MAX;
+int distF[1000][1000];	// fire
+int distP[1000][1000];	// person
 
 int dx[4] = {1, 0, -1, 0};
 int dy[4] = {0, -1, 0, 1};
 
-queue<tuple<int, int> > q1, q2;
+void solve() {
+	queue<pair<int, int> > fire, person;
 
-void bfs2() {
-	while (!q2.empty()) {
-		auto [x, y] = q2.front();
-		q2.pop();
-		for (int dir = 0; dir < 4; ++dir) {
-			int nx = x + dx[dir];
-			int ny = y + dy[dir];
+	cin >> w >> h;
 
-			if (nx < 0 || nx >= H || ny < 0 || ny >= W) {
-				if (!dist1[x][y] || dist2[x][y] < dist1[x][y])
-					ans = min(ans, dist2[x][y]);
-				continue;
+	// 입력 & 초기화
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
+			cin >> board[i][j];
+			distF[i][j] = distP[i][j] = -1;
+			if (board[i][j] == '*') {
+				fire.push({i, j});
+				distF[i][j] = 0;
+			} else if (board[i][j] == '@') {
+				person.push({i, j});
+				distP[i][j] = 0;
 			}
-			if (board[nx][ny] != '.' || dist2[nx][ny]) continue;
-
-			q2.push({nx, ny});
-			dist2[nx][ny] = dist2[x][y] + 1;
 		}
 	}
-}
 
-void bfs1() {
-	while (!q1.empty()) {
-		auto [x, y] = q1.front();
-		q1.pop();
+	// 불 bfs
+	while (!fire.empty()) {
+		auto [x, y] = fire.front();
+		fire.pop();
 		for (int dir = 0; dir < 4; ++dir) {
-			int nx = x + dx[dir];
-			int ny = y + dy[dir];
+			int nx = x + dx[dir], ny = y + dy[dir];
 
-			if (nx < 0 || nx >= H || ny < 0 || ny >= W) continue;
-			if (board[nx][ny] != '.' || dist1[nx][ny]) continue;
+			if (nx < 0 || nx >= h || ny < 0 || ny >= w) continue;
+			if (distF[nx][ny] != -1 || board[nx][ny] == '#') continue;
 
-			q1.push({nx, ny});
-			dist1[nx][ny] = dist1[x][y] + 1;
+			fire.push({nx, ny});
+			distF[nx][ny] = distF[x][y] + 1;
 		}
 	}
-}
 
-void init() {
-	for (int i = 0; i < H; ++i) {
-		fill(board[i], board[i] + W, 0);
-		fill(dist1[i], dist1[i] + W, 0);
-		fill(dist2[i], dist2[i] + W, 0);
+	// 사람 bfs
+	while (!person.empty()) {
+		auto [x, y] = person.front();
+		person.pop();
+		for (int dir = 0; dir < 4; ++dir) {
+			int nx = x + dx[dir], ny = y + dy[dir];
+
+			if (nx < 0 || nx >= h || ny < 0 || ny >= w) {
+				cout << distP[x][y] + 1 << '\n';
+				return;
+			}
+			if (distP[nx][ny] != -1 || board[nx][ny] == '#') continue;
+			if (distF[nx][ny] != -1 && distP[x][y] + 1 >= distF[nx][ny])
+				continue;
+
+			person.push({nx, ny});
+			distP[nx][ny] = distP[x][y] + 1;
+		}
 	}
-	ans = INT_MAX;
+	cout << "IMPOSSIBLE\n";
 }
 
 int main(void) {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-	cin >> T;
+	cin >> t;
 
-	for (int t = 0; t < T; ++t) {
-		cin >> W >> H;
-		for (int i = 0; i < H; ++i) {
-			for (int j = 0; j < W; ++j) {
-				cin >> board[i][j];
-				if (board[i][j] == '*') {
-					q1.push({i, j});
-					dist1[i][j] = 1;
-				} else if (board[i][j] == '@') {
-					board[i][j] = '.';
-					q2.push({i, j});
-					dist2[i][j] = 1;
-				}
-			}
-		}
-		bfs1();
-		bfs2();
-		if (ans == INT_MAX)
-			cout << "IMPOSSIBLE\n";
-		else
-			cout << ans << '\n';
-		init();
-	}
+	while (t--) solve();
 }
