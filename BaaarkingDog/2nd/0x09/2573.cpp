@@ -44,6 +44,10 @@ int main(void) {
 				if (sea[nx][ny] && board[x][y]) {
 					--board[x][y];
 					if (!board[x][y]) --cnt;
+					if (!cnt) {
+						cout << 0;
+						return 0;
+					}
 				}
 			}
 		}
