@@ -9,11 +9,11 @@ int dy[4] = {0, -1, 0, 1};
 
 void bfs() {
 	queue<pair<int, int> > q;
+	for (int i = 0; i < n; ++i) fill(dist[i], dist[i] + n, -1);
 
 	for (int i = 0; i < n; ++i) {
 		for (int j = 0; j < n; ++j) {
-			dist[i][j] = -1;
-			if (board[i][j] == island) {
+			if (board[i][j]) {
 				q.push({i, j});
 				dist[i][j] = 0;
 			}
@@ -27,14 +27,17 @@ void bfs() {
 		for (int dir = 0; dir < 4; ++dir) {
 			int nx = x + dx[dir], ny = y + dy[dir];
 			if (nx < 0 || nx >= n || ny < 0 || ny >= n) continue;
-			if (board[nx][ny] == island || dist[nx][ny] != -1) continue;
-			if (board[nx][ny] > 0) {
-				ans = min(ans, dist[x][y]);
-				return;
+			if (board[nx][ny] == board[x][y]) continue;
+
+			if (board[nx][ny] && board[nx][ny] != board[x][y]) {
+				ans = min(ans, dist[nx][ny] + dist[x][y]);
 			}
 
-			q.push({nx, ny});
-			dist[nx][ny] = dist[x][y] + 1;
+			if (!board[nx][ny] && dist[nx][ny] == -1) {	 // 바다를 처음 만났다면
+				board[nx][ny] = board[x][y];
+				dist[nx][ny] = dist[x][y] + 1;
+				q.push({nx, ny});
+			}
 		}
 	}
 }
@@ -77,10 +80,7 @@ int main(void) {
 		}
 	}
 
-	// 각 섬마다 bfs
-	while (island > 1) {
-		bfs();
-		--island;
-	}
+	// bfs
+	bfs();
 	cout << ans;
 }
