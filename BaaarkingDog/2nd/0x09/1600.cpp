@@ -21,26 +21,25 @@ int main(void) {
 	for (int i = 0; i < H; ++i) {
 		for (int j = 0; j < W; ++j) {
 			cin >> board[i][j];
-			for (int k = 0; k <= K; ++k) dist[i][j][k] = -1;
 		}
 	}
 
 	q.push({0, 0, 0});
-	dist[0][0][0] = 0;
+	dist[0][0][0] = 1;
 
 	while (!q.empty()) {
 		auto [x, y, cnt] = q.front();
 		q.pop();
 
 		if (x == H - 1 && y == W - 1) {
-			cout << dist[x][y][cnt];
+			cout << dist[x][y][cnt] - 1;
 			return 0;
 		}
 
 		for (int d = 0; d < 4; ++d) {
 			int nx = x + dx[d], ny = y + dy[d];
 			if (nx < 0 || nx >= H || ny < 0 || ny >= W) continue;
-			if (board[nx][ny] || dist[nx][ny][cnt] != -1) continue;
+			if (board[nx][ny] || dist[nx][ny][cnt]) continue;
 
 			q.push({nx, ny, cnt});
 			dist[nx][ny][cnt] = dist[x][y][cnt] + 1;
@@ -51,7 +50,7 @@ int main(void) {
 		for (int d = 0; d < 8; ++d) {
 			int nx = x + hdx[d], ny = y + hdy[d];
 			if (nx < 0 || nx >= H || ny < 0 || ny >= W) continue;
-			if (board[nx][ny] || dist[nx][ny][cnt + 1] != -1) continue;
+			if (board[nx][ny] || dist[nx][ny][cnt + 1]) continue;
 
 			q.push({nx, ny, cnt + 1});
 			dist[nx][ny][cnt + 1] = dist[x][y][cnt] + 1;
