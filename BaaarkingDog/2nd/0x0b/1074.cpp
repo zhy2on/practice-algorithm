@@ -1,22 +1,24 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int cnt, ans;
-int N, r, c;
-int dx[4] = {0, 0, 1, 1};
-int dy[4] = {0, 1, 1, 0};
+using ll = long long;
 
-void func(int x, int y, int k) {
+ll ans;
+int N, r, c;
+
+void func(int x, int y, int k, ll cnt) {
+	if (ans) return;
+
 	if (k == 1) {
 		if (x == r && y == c) ans = cnt;
-		++cnt;
 		return;
 	}
 
-	func(x, y, k / 2);
-	func(x, y + k / 2, k / 2);
-	func(x + k / 2, y, k / 2);
-	func(x + k / 2, y + k / 2, k / 2);
+	k = k / 2;
+	if (x + k <= r && y + k <= c) func(x + k, y + k, k, cnt + k * k * 3);
+	if (x + k <= r && y <= c) func(x + k, y, k, cnt + k * k * 2);
+	if (x <= r && y + k <= c) func(x, y + k, k, cnt + k * k);
+	if (x <= r && y <= c) func(x, y, k, cnt);
 }
 
 int main(void) {
@@ -24,6 +26,6 @@ int main(void) {
 	cin.tie(0);
 
 	cin >> N >> r >> c;
-	func(0, 0, 1LL << N);
+	func(0, 0, 1LL << N, 0);
 	cout << ans;
 }
