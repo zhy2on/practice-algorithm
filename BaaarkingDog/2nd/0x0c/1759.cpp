@@ -2,31 +2,17 @@
 using namespace std;
 
 int l, c;
-char arr[20], ans[20];
+char arr[20], skip[20];
 
 int aeiou() {
 	int cnt = 0;
-	for (int i = 0; i < l; ++i) {
-		if (ans[i] == 'a' || ans[i] == 'e' || ans[i] == 'i' || ans[i] == 'o' ||
-			ans[i] == 'u')
+	for (int i = 0; i < c; ++i) {
+		if (skip[i]) continue;
+		char ch = arr[i];
+		if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u')
 			++cnt;
 	}
 	return cnt;
-}
-
-void f(int k, int st) {
-	if (k == l) {
-		int cnt = aeiou();
-		if (cnt == 0 || l - cnt < 2) return;
-		for (int i = 0; i < l; ++i) cout << ans[i];
-		cout << '\n';
-		return;
-	}
-
-	for (int i = st; i < c; ++i) {
-		ans[k] = arr[i];
-		f(k + 1, i + 1);
-	}
 }
 
 int main(void) {
@@ -35,5 +21,16 @@ int main(void) {
 	cin >> l >> c;
 	for (int i = 0; i < c; ++i) cin >> arr[i];
 	sort(arr, arr + c);
-	f(0, 0);
+
+	for (int i = l; i < c; ++i) skip[i] = 1;
+
+	do {
+		int cnt = aeiou();
+		if (cnt == 0 || l - cnt < 2) continue;
+
+		for (int i = 0; i < c; ++i) {
+			if (skip[i] == 0) cout << arr[i];
+		}
+		cout << '\n';
+	} while (next_permutation(skip, skip + c));
 }
