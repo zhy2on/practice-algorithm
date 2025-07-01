@@ -1,38 +1,27 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-char student[8][8];
-int skip[25], ans;
-bool vis[8][8];
-
-queue<pair<int, int> > q;
+char student[5][5];
+int gang[7], board[5][5], ans;
 int dx[4] = {1, 0, -1, 0};
 int dy[4] = {0, -1, 0, 1};
 
-void init_vis() {
-	for (int i = 0; i < 5; ++i) {
-		for (int j = 0; j < 5; ++j) {
-			if (skip[i * 5 + j]) continue;
-			vis[i][j] = 0;
-			if (q.empty()) {
-				q.push({i, j});
-				vis[i][j] = 1;
-			}
-		}
-	}
-}
+bool bfs_check(int r, int c) {
+	queue<pair<int, int> > q;
+	bool vis[5][5] = {};
 
-bool check_around() {
-	init_vis();
+	q.push({r, c});
+	vis[r][c] = 1;
 	int cnt = 0;
 	while (!q.empty()) {
 		auto [x, y] = q.front();
 		q.pop();
 		++cnt;
+
 		for (int d = 0; d < 4; ++d) {
 			int nx = x + dx[d], ny = y + dy[d];
 			if (nx < 0 || nx >= 5 || ny < 0 || ny >= 5) continue;
-			if (skip[nx * 5 + ny] || vis[nx][ny]) continue;
+			if (!board[nx][ny] || vis[nx][ny]) continue;
 			q.push({nx, ny});
 			vis[nx][ny] = 1;
 		}
@@ -40,13 +29,19 @@ bool check_around() {
 	return cnt == 7;
 }
 
-bool check_count() {
-	int cnt = 0;
-	for (int i = 0; i < 25; ++i) {
-		if (skip[i]) continue;
-		if (student[i / 5][i % 5] == 'S') ++cnt;
+void dfs(int k, int st, int soms) {
+	if (k == 7) {
+		if (soms >= 4 && bfs_check(gang[0] / 5, gang[0] % 5)) ++ans;
+		return;
 	}
-	return cnt >= 4;
+
+	for (int i = st; i < 25; ++i) {
+		gang[k] = i;
+		board[i / 5][i % 5] = 1;
+		// soms += 1 하지 않게 조심
+		dfs(k + 1, i + 1, soms + (student[i / 5][i % 5] == 'S'));
+		board[i / 5][i % 5] = 0;
+	}
 }
 
 int main(void) {
@@ -56,14 +51,6 @@ int main(void) {
 	for (int i = 0; i < 5; ++i) {
 		for (int j = 0; j < 5; ++j) cin >> student[i][j];
 	}
-
-	for (int i = 7; i < 25; ++i) skip[i] = 1;
-	do {
-		if (!check_count()) continue;
-		if (!check_around()) continue;
-		++ans;
-	} while (next_permutation(skip, skip + 25));
+	dfs(0, 0, 0);
 	cout << ans;
 }
-
-// 25C7 을 하고 과반인지, 인접했는지 확인
