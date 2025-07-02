@@ -4,35 +4,30 @@ using namespace std;
 #define X first
 #define Y second
 
-int n, vs[10], ans;
+int n, ans, cnt;
 pair<int, int> arr[10];
-
-int break_eggs() {
-	pair<int, int> eggs[10];
-	for (int i = 0; i < n; ++i) eggs[i] = arr[i];
-
-	for (int i = 0; i < n; ++i) {
-		if (eggs[i].X <= 0 || eggs[vs[i]].X <= 0) continue;
-		eggs[i].X -= eggs[vs[i]].Y;
-		eggs[vs[i]].X -= eggs[i].Y;
-	}
-
-	int cnt = 0;
-	for (int i = 0; i < n; ++i) {
-		if (eggs[i].X <= 0) ++cnt;
-	}
-	return cnt;
-}
 
 void dfs(int k) {
 	if (k == n) {
-		ans = max(ans, break_eggs());
+		ans = max(ans, cnt);
+		return;
+	}
+	if (arr[k].X <= 0 ||
+		cnt == n - 1) {	 // 내가 더이상 칠 수 없을 때는 그냥 지나감
+		dfs(k + 1);
 		return;
 	}
 	for (int i = 0; i < n; ++i) {
-		if (i == k) continue;
-		vs[k] = i;
+		if (i == k || arr[i].X <= 0) continue;
+		arr[k].X -= arr[i].Y;
+		arr[i].X -= arr[k].Y;
+		if (arr[k].X <= 0) ++cnt;
+		if (arr[i].X <= 0) ++cnt;
 		dfs(k + 1);
+		if (arr[k].X <= 0) --cnt;
+		if (arr[i].X <= 0) --cnt;
+		arr[k].X += arr[i].Y;
+		arr[i].X += arr[k].Y;
 	}
 }
 
