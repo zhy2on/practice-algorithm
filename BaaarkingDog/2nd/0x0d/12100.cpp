@@ -1,75 +1,52 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define BLOCK first
-#define MIXED second
-
-int N, ans;
-pair<int, bool> board[20][20];
+int N, ans, dir[5];
+int board[20][20], board2[20][20];
 
 void rotate() {
-	pair<int, bool> tmp[20][20] = {};
+	int tmp[20][20] = {};
 	for (int i = 0; i < N; ++i) {
 		for (int j = 0; j < N; ++j) {
-			tmp[j][N - 1 - i] = board[i][j];
+			tmp[j][N - 1 - i] = board2[i][j];
 		}
 	}
+	memcpy(board2, tmp, sizeof tmp);
+}
+
+void swipe() {
 	for (int i = 0; i < N; ++i) {
+		int idx = 0;
+		int tmp[20] = {};
 		for (int j = 0; j < N; ++j) {
-			board[i][j] = tmp[i][j];
+			if (!board2[i][j]) continue;
+			if (!tmp[idx])
+				tmp[idx] = board2[i][j];
+			else if (tmp[idx] == board2[i][j])
+				tmp[idx++] *= 2;
+			else
+				tmp[++idx] = board2[i][j];
 		}
-	}
-}
-
-bool move(int x, int y, int i, int j) {
-	if (board[x][y].BLOCK == 0) {
-		if (y == 0) {
-			board[x][y] = board[i][j];
-			board[i][j] = {0, 0};
-			return true;
-		}
-		return false;
-	}
-	if (!board[x][y].MIXED && board[x][y].BLOCK == board[i][j].BLOCK) {
-		board[x][y].BLOCK *= 2;
-		board[x][y].MIXED = 1;
-		board[i][j] = {0, 0};
-		return true;
-	}
-	if (y + 1 == j) return true;
-	board[x][y + 1] = board[i][j];
-	board[i][j] = {0, 0};
-	return true;
-}
-
-void slide() {
-	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) board[i][j].MIXED = 0;
-	}
-
-	for (int i = 0; i < N; ++i) {
-		for (int j = 1; j < N; ++j) {
-			for (int goal = j - 1; goal >= 0; --goal) {
-				if (move(i, goal, i, j)) break;
-			}
-		}
+		memcpy(board2[i], tmp, sizeof tmp);
 	}
 }
 
 void dfs(int k) {
 	if (k == 5) {
+		memcpy(board2, board, sizeof board);
+		for (int i = 0; i < 5; ++i) {
+			for (int r = 0; r < dir[i]; ++r) rotate();
+			swipe();
+		}
+
 		for (int i = 0; i < N; ++i)
-			for (int j = 0; j < N; ++j) ans = max(ans, board[i][j].BLOCK);
+			for (int j = 0; j < N; ++j) ans = max(ans, board2[i][j]);
 		return;
 	}
 
-	pair<int, bool> backup[20][20];
 	for (int r = 0; r < 4; ++r) {
-		memcpy(backup, board, sizeof board);  // 상태 저장
-		for (int i = 0; i < r; ++i) rotate();
-		slide();
+		dir[k] = r;
 		dfs(k + 1);
-		memcpy(board, backup, sizeof board);  // 상태 복구
 	}
 }
 
@@ -79,9 +56,7 @@ int main(void) {
 
 	cin >> N;
 	for (int i = 0; i < N; ++i) {
-		for (int j = 0; j < N; ++j) {
-			cin >> board[i][j].BLOCK;
-		}
+		for (int j = 0; j < N; ++j) cin >> board[i][j];
 	}
 
 	dfs(0);
