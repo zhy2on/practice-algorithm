@@ -2,28 +2,22 @@
 using namespace std;
 
 int circle[4][8];
-int r[4];
 
-void rotate() {
-	for (int idx = 0; idx < 4; ++idx) {
-		if (r[idx] == 0) continue;
-
-		if (r[idx] == 1) {
-			int tmp = circle[idx][7];
-			for (int i = 7; i > 0; --i) circle[idx][i] = circle[idx][i - 1];
-			circle[idx][0] = tmp;
-		} else {
-			int tmp = circle[idx][0];
-			for (int i = 0; i < 7; ++i) circle[idx][i] = circle[idx][i + 1];
-			circle[idx][7] = tmp;
-		}
+void rotate(int idx, int dir) {
+	if (dir == 1) {
+		int tmp = circle[idx][7];
+		for (int i = 7; i > 0; --i) circle[idx][i] = circle[idx][i - 1];
+		circle[idx][0] = tmp;
+	} else {
+		int tmp = circle[idx][0];
+		for (int i = 0; i < 7; ++i) circle[idx][i] = circle[idx][i + 1];
+		circle[idx][7] = tmp;
 	}
 }
 
 void run() {
-	int idx;
+	int idx, r[4] = {};
 
-	fill(r, r + 4, 0);
 	cin >> idx >> r[--idx];
 
 	// left
@@ -37,7 +31,9 @@ void run() {
 		r[i + 1] = r[i] * -1;
 	}
 
-	rotate();
+	for (int i = 0; i < 4; ++i) {
+		if (r[i]) rotate(i, r[i]);
+	}
 }
 
 int main(void) {
