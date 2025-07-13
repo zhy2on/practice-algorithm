@@ -3,18 +3,6 @@ using namespace std;
 
 int circle[4][8];
 
-void rotate(int idx, int dir) {
-	if (dir == 1) {
-		int tmp = circle[idx][7];
-		for (int i = 7; i > 0; --i) circle[idx][i] = circle[idx][i - 1];
-		circle[idx][0] = tmp;
-	} else {
-		int tmp = circle[idx][0];
-		for (int i = 0; i < 7; ++i) circle[idx][i] = circle[idx][i + 1];
-		circle[idx][7] = tmp;
-	}
-}
-
 void run() {
 	int idx, r[4] = {};
 
@@ -32,7 +20,10 @@ void run() {
 	}
 
 	for (int i = 0; i < 4; ++i) {
-		if (r[i]) rotate(i, r[i]);
+		if (r[i] == 1)
+			rotate(circle[i], circle[i] + 7, circle[i] + 8);
+		else if (r[i] == -1)
+			rotate(circle[i], circle[i] + 1, circle[i] + 8);
 	}
 }
 
