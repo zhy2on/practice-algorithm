@@ -5,8 +5,6 @@ using namespace std;
 #define SNAKE -1
 
 deque<pair<int, int>> dq;
-queue<pair<int, int>> change;
-bool running = 1;
 int N, K, L, d, t;
 int board[101][101];
 int dx[4] = {0, 1, 0, -1}; // 동, 북, 서, 남
@@ -22,8 +20,8 @@ void move() {
   auto [head_x, head_y] = dq.front();
   int nx = head_x + dx[d], ny = head_y + dy[d];
   if (OOB(nx, ny) || board[nx][ny] == SNAKE) {
-    running = 0;
-    return;
+    cout << t;
+    exit(0);
   }
 
   if (board[nx][ny] != APPLE) {
@@ -34,29 +32,23 @@ void move() {
 
   dq.push_front({nx, ny});
   board[nx][ny] = SNAKE;
-
-  if (!change.empty()) {
-    auto [time, dir] = change.front();
-    if (time == t) {
-      d = (d + dir) % 4;
-      change.pop();
-    }
-  }
 }
 
 void run() {
+  dq.push_front({1, 1});
+  board[1][1] = SNAKE;
+
   cin >> L;
-  while (L--) {
+  for (int i = 0; i < L; ++i) {
     int X;
     char C;
     cin >> X >> C;
-    if (C == 'L') change.push({X, 3});
-    else change.push({X, 1});
-  }
 
-  dq.push_front({1, 1});
-  board[1][1] = SNAKE;
-  while (running) move();
+    while (t < X) move();
+    if (C == 'L') d = (d + 3) % 4;
+    else d = (d + 1) % 4;
+  }
+  while (1) move();
 }
 
 int main(void) {
