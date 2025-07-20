@@ -5,6 +5,7 @@ using namespace std;
 #define SNAKE -1
 
 deque<pair<int, int>> dq;
+queue<pair<int, int>> change;
 bool running = 1;
 int N, K, L, d, t;
 int board[101][101];
@@ -33,23 +34,28 @@ void move() {
 
   dq.push_front({nx, ny});
   board[nx][ny] = SNAKE;
+
+  if (!change.empty()) {
+    auto [time, dir] = change.front();
+    if (time == t) {
+      d = (d + dir) % 4;
+      change.pop();
+    }
+  }
 }
 
 void run() {
-  dq.push_front({1, 1});
-  board[1][1] = SNAKE;
-
   cin >> L;
-  for (int i = 0; i < L; ++i) {
+  while (L--) {
     int X;
     char C;
     cin >> X >> C;
-
-    if (!running) continue;
-    while (t < X && running) move();
-    if (C == 'L') d = (d + 3) % 4;
-    else d = (d + 1) % 4;
+    if (C == 'L') change.push({X, 3});
+    else change.push({X, 1});
   }
+
+  dq.push_front({1, 1});
+  board[1][1] = SNAKE;
   while (running) move();
 }
 
