@@ -70,8 +70,9 @@ void dfs(int k) {
     init();
     for (int i = 0; i < 10; ++i) {
       tilt(tilt_d[i]);
-      if (is_red_fall || is_blue_fall) {
-        if (is_red_fall && !is_blue_fall) ans = min(ans, i + 1);
+      if (is_blue_fall) return;
+      if (is_red_fall) {
+        ans = min(ans, i);
         return;
       }
     }
