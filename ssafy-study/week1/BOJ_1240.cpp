@@ -17,10 +17,10 @@ int bfs(int from, int to) {
     auto cur = q.front(); q.pop();
     
     for (auto nxt : adj[cur.NODE]) {
+      if (nxt.NODE == to) return cur.DIST + nxt.DIST;
       if (vis[nxt.NODE]) continue;
       q.push({nxt.NODE, cur.DIST + nxt.DIST});
       vis[nxt.NODE] = 1;
-      if (nxt.NODE == to) return cur.DIST + nxt.DIST;
     }
   }
   return -1;
