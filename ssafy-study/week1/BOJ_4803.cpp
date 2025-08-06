@@ -2,7 +2,7 @@
 using namespace std;
 
 #define NODE first
-#define PARENT second
+#define FROM second
 
 int n, m;
 
@@ -24,7 +24,7 @@ int bfs(const vector<int> (&adj)[501]) {
       pair<int, int> cur = q.front(); q.pop();
       for (int nxt : adj[cur.NODE]) {
         if (vis[nxt]) {
-          if (nxt != cur.PARENT) is_cycle = 1;
+          if (nxt != cur.FROM) is_cycle = 1;
           continue;
         }
         q.push({nxt, cur.NODE});
