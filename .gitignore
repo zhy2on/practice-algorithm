@@ -2,3 +2,4 @@
 .vscode
 *.class
 *.txt
+*.DS_Store
