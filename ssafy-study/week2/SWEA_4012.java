@@ -7,30 +7,34 @@ public class SWEA_4012 {
   static StringBuilder sb = new StringBuilder();
   static int T, N, ans;
   static int[][] S = new int[16][16];
-  static boolean[] isA = new boolean[16];
+  static int[] aBase = new int[8];
+  static int[] bBase = new int[8];
 
   static void updateAns() {
     int aS = 0, bS = 0;
-    for (int i = 0; i < N; ++i) {
-      for (int j = 0; j < N; ++j) {
+    for (int i = 0; i < N / 2; ++i) {
+      for (int j = 0; j < N / 2; ++j) {
         if (i == j) continue;
-        if (isA[i] && isA[j]) aS += S[i][j];
-        if (!isA[i] && !isA[j]) bS += S[i][j]; 
+        aS += S[aBase[i]][aBase[j]];
+        bS += S[bBase[i]][bBase[j]];
       }
     }
     ans = Math.min(ans, Math.abs(aS - bS));
   }
 
-  static void dfs(int k, int st) { // 식재료 N/2를 뽑음
-    if (k == N / 2) {
+  static void dfs(int k, int aIdx, int bIdx) {
+    if (k == N) {
       updateAns();
       return;
     }
 
-    for (int i = st; i < N; ++i) {
-      isA[i] = true;
-      dfs(k + 1, i + 1);
-      isA[i] = false;
+    if (aIdx < N / 2) { // 내가 A에 들어가는 경우
+      aBase[aIdx] = k;
+      dfs(k + 1, aIdx + 1, bIdx);
+    }
+    if (bIdx < N / 2) { // 내가 B에 들어가는 경우
+      bBase[bIdx] = k;
+      dfs(k + 1, aIdx, bIdx + 1);
     }
   }
 
@@ -54,7 +58,7 @@ public class SWEA_4012 {
       init();
 
       // 실행
-      dfs(0, 0);
+      dfs(0, 0, 0);
 
       // 출력
       sb.append('#').append(tc).append(' ').append(ans).append('\n');
