@@ -7,7 +7,7 @@ public class BOJ_1932 {
   static StringBuilder sb = new StringBuilder();
   static int N, ans;
   static int[][] meet = new int[1000000][2];
-  static boolean[] isused = new boolean[1000000];
+  static int[] cnt = new int[1000000];
 
   static void run() {
     // 정렬 - 시작시간순. 시작시간이 같다면 종료시간이 더 빠른 걸로
@@ -17,21 +17,14 @@ public class BOJ_1932 {
     });
 
     // 해당 회의가 시작일 때의 최대 회의 개수 구하기
-    for (int i = 0; i < N; ++i) {
-      int cnt = 1;
-
-      if (isused[i]) continue;
-      int cur = meet[i][1]; // 끝나는 시간
-      int j = i + 1;
-      while (true) {
-        while (j < N && meet[j][0] < cur) ++j; // 시작시간이 끝나는 시간 이전이면 다음 걸 탐색
-        if (j == N) break;
-        cur = meet[j][1]; // 새로운 cur은 끝나는 시간
-        isused[j] = true;
-        ++cnt;
-      }
-
-      ans = Math.max(cnt, ans);
+    cnt[0] = 1;
+    for (int i = 1; i < N; ++i) {
+      cnt[i] = 1;
+      int j = i - 1;
+      while (j >= 0 && meet[j][1] > meet[i][0]) --j;
+      if (j == -1) continue;
+      cnt[i] += cnt[j];
+      ans = Math.max(ans, cnt[i]);
     }
   }
 
