@@ -66,13 +66,6 @@ public class SWEA_1767 {
     ans = Integer.MAX_VALUE;
   }
 
-  static void print() {
-    for (int i = 0; i < N; ++i) {
-      for (int j = 0; j < N; ++j) System.out.print(board[i][j] + " ");
-      System.out.println();
-    }
-  }
-
   public static void main(String[] args) throws IOException {
     br = new BufferedReader(new InputStreamReader(System.in));
 
